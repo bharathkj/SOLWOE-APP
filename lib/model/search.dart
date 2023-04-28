@@ -1,0 +1,4 @@
+enum SearchType {
+  selfCareActivities,
+  doctors,
+}
