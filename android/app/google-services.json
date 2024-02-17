@@ -1,13 +1,30 @@
 {
-  "type": "service_account",
-  "project_id": "emot-detect-webapp",
-  "private_key_id": "12db62ebcdb7eac566116fcc2b364e813c68a78d",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDmrBazMomssBwd\n2SZZAJQnYpSb+CPwgJLu9GXYz1keQ794ncjaATYExfLn37IC3gCFMbBGptnLAfnc\nsVluZRfVgApwQJNWJ1Invuqr+JyoHpkiFNPMsWzIZHb5TjAxzZEcAENkNl+rWPzf\nPgor3f4xNsJhnepkfdUJU1jyG2OBLlXjY9jCdYp8O5mDIkN2C0jNT986Zx9psdZO\nuJe5eHHpzKaaz180TGqSNT91M0PjGNZbn+WI/99SGpaGt1H85at0pxoENGzIzhYP\nCRDtJBXypMHeh5GT31IJ8SFW//IM2DvN1WSzaba5TwqPmkcIVoUGMuUYMDlxylGF\nKjTgotFdAgMBAAECggEAJ2Wscdo3l+ozPyjTqx9Vbn2gjpv8vWqkTdIpo/RUDv54\nsRfX0l4jFQEfCdnTrDgxBA62wfZk286gV4Bl2xxCjBk0jzQERhJsrnOl3o3VacRi\nGKdQflUuVHKOPGnNgvAOcOcdm3vK7rfB5roQoCnn7I1i+SuwuQ2hyVg2KJGjdtA5\nTwgSDFKIfFOZKib1XVAd+0BUpejZfljGAX/aZu+dcaapT8t7nEFPGviTFRFW0WoG\nmyrfReZOglYKETis/7Pk4k1LFuOcxixnyF115oT8hjQfE24bJcvGbh4wd8ywlvHm\nERoyIXr4mBv63nYr/tujqOlin1DKjck3SnjNL8a2CQKBgQD9mZ96y8Uhm+5LxcbS\n0qNGlTy+jINVYX3D3aEsnhImRxLLkd39rcMT2ZD1smelDnTXAeECWZUYCzSdIhMX\nGDCax4QqjrGGlow7hEwDFb0JDeTa/Z8pSuOUvy5MDkTVQo3zPRbZeRjT6BT7jVvX\nW/YKQtgEbbiVk2XQK2cIaWj6CQKBgQDo2uuPbh/78fZNiKjl0Sd+lqOMZVTzdsXD\nYdWGFo5oeET5fonYsGXYpQOuebr0sw7oOrdNJsUjSI4sxzQ1fLiqUw4l8GpB/OsK\n2EnKOs1bUzZ+H3BCRp40HtFMCqlMbWCWizcItIHcxZVzi4OmfRIsv8wq/12/W5la\nPiY8SPABtQKBgQCrjbbS7PHoMIHdhGdhythlMSOsi4V0xsS7MTyM4EnK1x2h1IVl\nzJxA21cyvoNapxLnOAAtBMjVQQ9QlPJxFw4aRonj+C+jqkgnIvIAzD3a2ClO828u\nEdkukL4S+TwbQDCisVq5ty/SehdnrFLKtw0UF+/l3wuVM+cWEaZbjGNVcQKBgCBG\nl/gdj5lghH9iveZ9AzhssOa49Pl6MRdP7ETVw49/fDAI9hpu+O76kHQSs3NPjnVq\nDhZHlXO6jtpuEjKHwyD4ujFQDapv4DR0nmXFmMlb02XP/cNx/mPDEce0gprxXj3/\ntfUi8A0l5f1KDUl6dJZ3T1l2ZAwuKid0DeC1S28xAoGBAKUdAhHrJubL+IJA8Gv6\nLwXD0Txq5bdh2FwTm1ikhORcz0YOdzanCBCAnYojRgiW19gfPh7ApXMYn3K2y1Lu\nBBBPHDl7fwu5TSZ5ZvENj2KKcv8EdGXfQsZ/I7TtlZLox3ipXAYFYl4iFLsr6U3z\n3lbdh2rhjRkjOw8N9z9PXdGQ\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-ffke8@emot-detect-webapp.iam.gserviceaccount.com",
-  "client_id": "102947750732555826331",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ffke8%40emot-detect-webapp.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+  "project_info": {
+    "project_number": "1059594239276",
+    "firebase_url": "https://emot-detect-webapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "emot-detect-webapp",
+    "storage_bucket": "emot-detect-webapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059594239276:android:0d7078a01b3a5f4109c089",
+        "android_client_info": {
+          "package_name": "com.example.solwoe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAag6POD-z8ni_imLuR-m1I7lFMUNrwbxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
