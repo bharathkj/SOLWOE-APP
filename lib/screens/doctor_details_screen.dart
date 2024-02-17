@@ -234,9 +234,6 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Doctor Details',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),

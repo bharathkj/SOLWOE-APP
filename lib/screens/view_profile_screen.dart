@@ -80,9 +80,6 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Profile',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: IconThemeData(
           color: Colors.black,

@@ -45,9 +45,6 @@ class _ShowVideosScreenState extends State<ShowVideosScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           widget.title,
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),

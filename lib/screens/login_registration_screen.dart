@@ -144,13 +144,11 @@ class _LoginRegistrationScreenState extends State<LoginRegistrationScreen> {
                           type == 'Login'
                               ? "Hey there, welcome back!"
                               : 'Create an Account',
-                          style: GoogleFonts.sourceSerifPro(fontSize: 24),
                         ),
                         Text(
                           type == 'Login'
                               ? "Glad to have you here with us"
                               : "Register to become a part of our community",
-                          style: GoogleFonts.sourceSerifPro(fontSize: 16),
                         ),
                         const SizedBox(
                           height: 40,

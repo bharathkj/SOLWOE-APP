@@ -80,22 +80,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         Text(
                           walkThrough[i].title,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.sourceSerifPro(
-                            fontWeight: FontWeight.w600,
-                            fontSize: (MediaQuery.of(context).size.width <= 550)
-                                ? 26
-                                : 30,
-                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           walkThrough[i].description,
-                          style: GoogleFonts.sourceSerifPro(
-                            fontWeight: FontWeight.w300,
-                            fontSize: (MediaQuery.of(context).size.width <= 550)
-                                ? 16
-                                : 24,
-                          ),
                           textAlign: TextAlign.center,
                         )
                       ],

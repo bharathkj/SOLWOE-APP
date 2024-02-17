@@ -38,9 +38,6 @@ class _SelfCareScreenState extends State<SelfCareScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Self Care',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),

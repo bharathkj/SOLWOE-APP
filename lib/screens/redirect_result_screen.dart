@@ -74,9 +74,6 @@ class RedirectResultScreen extends StatelessWidget {
           backgroundColor: ConstantColors.secondaryBackgroundColor,
           title: Text(
             'Result',
-            style: GoogleFonts.sourceSerifPro(
-              color: Colors.black,
-            ),
           ),
           iconTheme: IconThemeData(color: Colors.black),
         ),

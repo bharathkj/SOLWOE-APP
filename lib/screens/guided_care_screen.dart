@@ -167,9 +167,6 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
           backgroundColor: ConstantColors.secondaryBackgroundColor,
           title: Text(
             'Guided Care',
-            style: GoogleFonts.sourceSerifPro(
-              color: Colors.black,
-            ),
           ),
           iconTheme: IconThemeData(color: Colors.black),
         ),

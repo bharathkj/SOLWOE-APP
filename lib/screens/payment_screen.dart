@@ -63,9 +63,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Billing Details',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
