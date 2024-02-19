@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -97,7 +98,7 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
   }
 
   Future<void> sendToFlaskServer(String title, String content, String documentId) async {
-    final String flaskServerUrl = 'http://127.0.0.1:5000/analyze-emotion'; // Replace with your Flask server URL
+    final String flaskServerUrl = 'http://192.168.29.182:5000/analyze-emotion'; // Replace with your Flask server URL
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
@@ -109,7 +110,8 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
       try {
         final response = await http.post(
           Uri.parse(flaskServerUrl),
-          body: payload,
+          headers: {'Content-Type': 'application/json'},  // Set Content-Type header
+          body: jsonEncode(payload),  // Encode payload as JSON
         );
 
         if (response.statusCode == 200) {
