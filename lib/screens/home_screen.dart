@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:solwoe/auth.dart';
@@ -13,6 +14,8 @@ import 'package:solwoe/screens/dashboard_screen.dart';
 import 'package:solwoe/screens/manam_call_screen.dart';
 import 'package:solwoe/screens/welcome_screen.dart';
 
+import 'package:solwoe/screens/camera_page.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final User? user = Auth().currentUser;
   UserProfile? _userProfile;
+  late List<CameraDescription> cameras;  // Declare cameras here
 
   late final List<Widget> _screens;
 
@@ -50,16 +54,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _asyncMethod() async {
     _userProfile = await UserProfile.getUserProfile();
+    cameras = await availableCameras();  // Use await to get the cameras
   }
 
   Future<void> signOut(BuildContext context) async {
     await Auth().signOut().then(
           (value) => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (_) => const WelcomeScreen(),
-            ),
-          ),
-        );
+        MaterialPageRoute(
+          builder: (_) => const WelcomeScreen(),
+        ),
+      ),
+    );
   }
 
   void onTabTapped(int index) {
@@ -72,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (_) => const ManamCallScreen()));
               },
             ),
-           
+
+            ListTile(
+              leading: const Icon(Icons.info_rounded),
+              title: const Text('Live Camera'),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => CameraPage(cameras: cameras)));
+              },
+            ),
+
             ListTile(
               leading: const Icon(Icons.info_rounded),
               title: const Text('About'),
