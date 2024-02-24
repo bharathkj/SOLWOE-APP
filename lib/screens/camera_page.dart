@@ -55,22 +55,16 @@ class _CameraPageState extends State<CameraPage> {
         isCameraReady = true;
       });
     }
-    _startImageCaptureTimer();
   }
 
   Future<void> _disposeController() async {
     await _controller.dispose();
   }
 
-  void _startImageCaptureTimer() {
-    const period = Duration(seconds: 3);
-    Timer.periodic(period, (Timer timer) async {
-      await _sendImageFrame();
-    });
-  }
-
   Future<void> _sendImageFrame() async {
+    print('Sending image frame...');
     if (!_controller.value.isInitialized) {
+      print('Controller not initialized!');
       return;
     }
 
@@ -92,6 +86,12 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   @override
+  void dispose() {
+    _disposeController();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -106,16 +106,17 @@ class _CameraPageState extends State<CameraPage> {
                   : Center(child: CircularProgressIndicator()),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () async {
+                await _sendImageFrame();
+              },
+              child: Text('Capture frame'),
+            ),
+          ),
         ],
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _disposeController();
-    super.dispose();
-  }
 }
-
-//sdsdsdsdsdss
