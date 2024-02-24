@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:solwoe/colors.dart';
 import 'package:solwoe/model/user.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io'; // Add this import for File class
+
 
 class ViewProfileScreen extends StatefulWidget {
   final UserProfile? userProfile;
@@ -9,9 +14,59 @@ class ViewProfileScreen extends StatefulWidget {
 
   @override
   State<ViewProfileScreen> createState() => _ViewProfileScreenState();
+
 }
 
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
+
+  File? _selectedImage;
+
+
+  Future<void> _uploadImageToFirebase(XFile pickedFile) async {
+    final storage = FirebaseStorage.instance;
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final userName = user.displayName;
+
+      if (userName != null) {
+        final storageRef = storage.ref().child('profile_pictures/$userName.jpg');
+
+        try {
+          await storageRef.putFile(File(pickedFile.path));
+          final downloadUrl = await storageRef.getDownloadURL();
+
+          // Update the user's profile picture URL in your user database.
+          // For example, you can use Cloud Firestore or Firebase Realtime Database.
+          // Update the UI to reflect the new profile picture.
+        } catch (e) {
+          print('Error uploading image to Firebase Storage: $e');
+          print(e);
+        }
+      }
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final imagePicker = ImagePicker();
+    final XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Upload the picked image file to Firebase Storage and update the user's profile picture.
+      await _uploadImageToFirebase(pickedFile);
+
+      // Convert XFile to File
+      File pickedFileAsFile = File(pickedFile.path);
+
+      // Trigger UI rebuild
+      setState(() {
+        _selectedImage = pickedFileAsFile;
+      });
+    }
+  }
+
+
+
   final formKey = GlobalKey<FormState>();
 
   final TextEditingController _dateOfBirth = TextEditingController();
@@ -89,12 +144,20 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            ElevatedButton(
+              onPressed: () {
+                _pickImage(); // assuming _pickImage is a function in your code
+              },
+              child: Text('Change Profile Picture'),
+            ),
             SizedBox(height:20),
             SizedBox(
               height: 150,
               width: 225,
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/profilePicture.png'),
+                backgroundImage: _selectedImage != null
+                    ? FileImage(_selectedImage!) as ImageProvider<Object>?
+                    : AssetImage('assets/profilePicture.png'),
               ),
             ),
             SizedBox(height: 20),
