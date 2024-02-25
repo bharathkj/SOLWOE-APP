@@ -35,6 +35,7 @@ class _CameraPageState extends State<CameraPage> {
   late CameraController _controller;
   late List<CameraDescription> cameras;
   late bool isCameraReady;
+  late Timer? _timer; // Use Timer? to allow null
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _CameraPageState extends State<CameraPage> {
       cameras.firstWhere((camera) => camera.lensDirection == CameraLensDirection.back),
       ResolutionPreset.medium,
     );
+    _timer = null; // Initialize _timer to null
     _initializeController();
   }
 
@@ -77,7 +79,8 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     final imageBytes = await imageFile.readAsBytes();
-    print("printing imagebytes");
+    print("Printing image bytes");
+
     final response = await http.post(
       Uri.parse('http://192.168.29.182:5001/process_frame'),
       headers: {
@@ -88,9 +91,27 @@ class _CameraPageState extends State<CameraPage> {
 
     print('Server Response: ${response.body}');
   }
-    @override
+
+  // Toggle the timer
+  void _toggleTimer() {
+    if (_timer == null) {
+      // Start the timer
+      _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+        if (isCameraReady) {
+          await _sendImageFrame();
+        }
+      });
+    } else {
+      // Stop the timer
+      _timer!.cancel();
+      _timer = null;
+    }
+  }
+
+  @override
   void dispose() {
     _disposeController();
+    _timer?.cancel(); // Cancel the timer if it's running
     super.dispose();
   }
 
@@ -112,10 +133,10 @@ class _CameraPageState extends State<CameraPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: () async {
-                await _sendImageFrame();
+              onPressed: () {
+                _toggleTimer();
               },
-              child: Text('Capture frame'),
+              child: Text(_timer == null ? 'Start / Stop' : 'Stop Timer'),
             ),
           ),
         ],
@@ -123,3 +144,4 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
+
