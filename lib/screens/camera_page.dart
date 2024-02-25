@@ -77,15 +77,18 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     final imageBytes = await imageFile.readAsBytes();
+    print("printing imagebytes");
     final response = await http.post(
       Uri.parse('http://192.168.29.182:5001/process_frame'),
-      body: {'image_frame': imageBytes},
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+      body: imageBytes,
     );
 
     print('Server Response: ${response.body}');
   }
-
-  @override
+    @override
   void dispose() {
     _disposeController();
     super.dispose();
