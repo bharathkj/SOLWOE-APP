@@ -82,7 +82,7 @@ class _CameraPageState extends State<CameraPage> {
     print("Printing image bytes");
 
     final response = await http.post(
-      Uri.parse('http://192.168.29.182:5001/process_frame'),
+      Uri.parse('http://10.11.52.219:5000/process_frame'),
       headers: {
         'Content-Type': 'application/octet-stream',
       },
