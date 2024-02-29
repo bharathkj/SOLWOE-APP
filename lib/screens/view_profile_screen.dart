@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:solwoe/colors.dart';
@@ -19,7 +20,40 @@ class ViewProfileScreen extends StatefulWidget {
 
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
+  late DatabaseReference _databaseReference;
+
+  List<String> patients = [];
+  String selectedPatient = '';
+
   File? _selectedImage;
+
+  void _onPatientSelected(String patientUsername) {
+  }
+
+  void _grantPermission() {
+    final caretakerUsername = FirebaseAuth.instance.currentUser!.displayName;
+    if (caretakerUsername != null && selectedPatient.isNotEmpty) {
+      _databaseReference
+          .child('users/$selectedPatient/caretakerperm')
+          .push()
+          .set(caretakerUsername);
+
+      // Optionally, you can also update the caretaker's profile with the selected patient
+      _databaseReference
+          .child('users/$caretakerUsername/patients')
+          .push()
+          .set(selectedPatient);
+
+      // Provide feedback to the user if needed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Permission granted to view $selectedPatient\'s data'),
+        ),
+      );
+    }
+  }
+
+
 
 
   Future<void> _uploadImageToFirebase(XFile pickedFile) async {
@@ -30,7 +64,8 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
       final userName = user.displayName;
 
       if (userName != null) {
-        final storageRef = storage.ref().child('profile_pictures/$userName.jpg');
+        final storageRef = storage.ref().child(
+            'profile_pictures/$userName.jpg');
 
         try {
           await storageRef.putFile(File(pickedFile.path));
@@ -49,7 +84,8 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
-    final XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await imagePicker.pickImage(
+        source: ImageSource.gallery);
 
     if (pickedFile != null) {
       // Upload the picked image file to Firebase Storage and update the user's profile picture.
@@ -64,7 +100,6 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
       });
     }
   }
-
 
 
   final formKey = GlobalKey<FormState>();
@@ -88,14 +123,24 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   @override
   void initState() {
     super.initState();
-    /*   _name = widget.userEntity.name;
-    _dateOfBirth.text = widget.userEntity.dateOfBirth;
-    _age = widget.userEntity.age;
-    _gender = widget.userEntity.gender;
-    _role = widget.userEntity.role;
-    _countryValue = widget.userEntity.country;
-    _stateValue = widget.userEntity.state;
-    _cityValue = widget.userEntity.city; */
+    _databaseReference = FirebaseDatabase.instance.reference();
+
+    // Fetch the list of usernames from the 'users' directory
+    _databaseReference.child('users').once().then((DatabaseEvent event) {
+      if (event.snapshot != null && event.snapshot.value != null) {
+        Map<dynamic, dynamic>? users = event.snapshot.value as Map<dynamic, dynamic>?;
+
+        if (users != null) {
+          patients = users.keys.cast<String>().toList();
+          print("Patients 1: $patients");
+          setState(() {});
+          print("Patients 2: $patients");
+        }
+      }
+    }).catchError((error) {
+      print('Error fetching data: $error');
+    });
+
   }
 
   Widget buildCard(String text, IconData icon) {
@@ -141,47 +186,67 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                _pickImage(); // assuming _pickImage is a function in your code
-              },
-              child: Text('Change Profile Picture'),
-            ),
-            SizedBox(height:20),
-            SizedBox(
-              height: 150,
-              width: 225,
-              child: CircleAvatar(
-                backgroundImage: _selectedImage != null
-                    ? FileImage(_selectedImage!) as ImageProvider<Object>?
-                    : AssetImage('assets/profilePicture.png'),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  _pickImage(); // assuming _pickImage is a function in your code
+                },
+                child: Text('Change Profile Picture'),
               ),
-            ),
-            SizedBox(height: 20),
-            buildCard(
-              widget.userProfile!.name,
-              Icons.person_rounded,
-            ),
-            buildCard(
-              widget.userProfile!.email,
-              Icons.email_rounded,
-            ),
-            buildCard(
-              widget.userProfile!.gender,
-              Icons.male_rounded,
-            ),
-            buildCard(
-              widget.userProfile!.dateOfBirth,
-              Icons.date_range_rounded,
-            ),
-            buildCard(
-              '${widget.userProfile!.state}, ${widget.userProfile!.country}',
-              Icons.location_city_rounded,
-            ),
-          ],
+              SizedBox(height: 20),
+              SizedBox(
+                height: 150,
+                width: 225,
+                child: CircleAvatar(
+                  backgroundImage: _selectedImage != null
+                      ? FileImage(_selectedImage!) as ImageProvider<Object>?
+                      : AssetImage('assets/profilePicture.png'),
+                ),
+              ),
+              SizedBox(height: 20),
+              DropdownButton<String>(
+                value: selectedPatient,
+                items: patients.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  _onPatientSelected(newValue!);
+                },
+                hint: Text('Select a caretaker'),
+              ),
+              ElevatedButton(
+                onPressed: _grantPermission,
+                child: Text('Grant Permission'),
+              ),
+              // ... (remaining existing code)
+              buildCard(
+                widget.userProfile!.name,
+                Icons.person_rounded,
+              ),
+              buildCard(
+                widget.userProfile!.email,
+                Icons.email_rounded,
+              ),
+              buildCard(
+                widget.userProfile!.gender,
+                Icons.male_rounded,
+              ),
+              buildCard(
+                widget.userProfile!.dateOfBirth,
+                Icons.date_range_rounded,
+              ),
+              buildCard(
+                '${widget.userProfile!.state}, ${widget.userProfile!.country}',
+                Icons.location_city_rounded,
+              ),
+            ],
+          ),
         ),
       ),
     );

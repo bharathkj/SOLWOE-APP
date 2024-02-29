@@ -16,6 +16,8 @@ import 'package:solwoe/screens/welcome_screen.dart';
 
 import 'package:solwoe/screens/camera_page.dart';
 
+import 'EmotionChart.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -120,13 +122,23 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             ListTile(
-              leading: const Icon(Icons.info_rounded),
+              leading: const Icon(Icons.camera_alt_rounded),
               title: const Text('Live Camera'),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => CameraPage(cameras: cameras)));
               },
             ),
+
+            ListTile(
+              leading: const Icon(Icons.show_chart_rounded),
+              title: const Text('Results'),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => EmotionChart()));
+              },
+            ),
+
 
             ListTile(
               leading: const Icon(Icons.info_rounded),

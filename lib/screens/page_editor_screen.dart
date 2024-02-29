@@ -98,7 +98,7 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
   }
 
   Future<void> sendToFlaskServer(String title, String content, String documentId) async {
-    final String flaskServerUrl = 'http://192.168.29.182:5000/analyze-emotion'; // Replace with your Flask server URL
+    final String flaskServerUrl = 'http://10.11.52.219:5000/analyze-emotion'; // Replace with your Flask server URL
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {

@@ -84,6 +84,7 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                               ),
                               child: Text("Join"),
                             ),
+
                             const SizedBox(
                               width: 4,
                             ),
