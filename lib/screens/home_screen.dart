@@ -16,7 +16,7 @@ import 'package:solwoe/screens/welcome_screen.dart';
 
 import 'package:solwoe/screens/camera_page.dart';
 
-import 'EmotionChart.dart';
+import 'emotion_chart.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
