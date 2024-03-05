@@ -1,30 +1,36 @@
-// text_emotion_chart.dart
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 class TextEmotionChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchData('coomestofcoomer@gmail.com', 'textemotion'), // Replace with the actual username
+      future: fetchData('coomestofcoomer@gmail.com', 'textemotion'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          List<ScatterSpot> dataPoints = snapshot.data as List<ScatterSpot>;
+          List<FlSpot> dataPoints = snapshot.data as List<FlSpot>;
 
           return Center(
-            child: ScatterChart(
-              ScatterChartData(
+            child: LineChart(
+              LineChartData(
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(),
                   bottomTitles: AxisTitles(),
                 ),
-                scatterSpots: dataPoints,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: dataPoints,
+                    isCurved: true,
+                    //colors: [Colors.red], // You can set the color here
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
               ),
             ),
           );
@@ -33,30 +39,27 @@ class TextEmotionChart extends StatelessWidget {
     );
   }
 
-  Future<List<ScatterSpot>> fetchData(String username, String collectionName) async {
+  Future<List<FlSpot>> fetchData(String username, String collectionName) async {
     var querySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc('coomestofcoomer@gmail.com')
         .collection('textemotion')
+        .orderBy('timestamp') // Order by timestamp
         .get();
 
-    List<ScatterSpot> dataPoints = [];
+    List<FlSpot> dataPoints = [];
 
     querySnapshot.docs.forEach((doc) {
       var emotionData = doc['emotion'];
       var timestamp = doc['timestamp'];
 
       if (emotionData != null && timestamp != null) {
-        double positive = emotionData['positive'] ?? 0;
         double negative = emotionData['negative'] ?? 0;
-        double neutral = emotionData['neutral'] ?? 0;
 
-        double calculatedEmotionValue = (positive + neutral - negative) / 3;
+        DateTime dateTime = (timestamp as Timestamp).toDate();
+        double timestampValue = dateTime.millisecondsSinceEpoch.toDouble() / 1000; // Convert to seconds
 
-        Timestamp timestamp = doc['timestamp'];
-        double timestampValue = timestamp.millisecondsSinceEpoch.toDouble() / 1000; // Convert to seconds
-
-        dataPoints.add(ScatterSpot(timestampValue, calculatedEmotionValue));
+        dataPoints.add(FlSpot(timestampValue, negative));
       }
     });
 
