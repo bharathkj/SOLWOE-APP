@@ -36,6 +36,58 @@ class _CameraPageState extends State<CameraPage> {
   late List<CameraDescription> cameras;
   late bool isCameraReady;
   late Timer? _timer; // Use Timer? to allow null
+  bool isTimerActive = false; // Indicator for the active timer
+  bool isPictureTaken = false; // Indicator for the picture being taken
+  String jsonResult = ''; // Variable to hold the JSON result
+
+  // Start the timer
+  void _startTimer() {
+    if (_timer == null) {
+      // Start the timer
+      _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+        if (isCameraReady) {
+          // Set the indicator to show the picture is being taken
+          setState(() {
+            isPictureTaken = true;
+          });
+
+          await _sendImageFrame();
+
+          // Reset the indicator after a short delay
+          _resetPictureTakenIndicator();
+        }
+      });
+
+      // Update the visual indicator
+      setState(() {
+        isTimerActive = true;
+      });
+    }
+  }
+
+  // Reset the indicator after a short delay
+  void _resetPictureTakenIndicator() {
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        isPictureTaken = false;
+      });
+    });
+  }
+
+  // Stop the timer
+  void _stopTimer() {
+    if (_timer != null) {
+      // Stop the timer
+      _timer!.cancel();
+      _timer = null;
+
+      // Update the visual indicator
+      setState(() {
+        isTimerActive = false;
+        isPictureTaken = false;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -43,7 +95,8 @@ class _CameraPageState extends State<CameraPage> {
     cameras = widget.cameras;
     isCameraReady = false;
     _controller = CameraController(
-      cameras.firstWhere((camera) => camera.lensDirection == CameraLensDirection.back),
+      cameras.firstWhere((camera) =>
+      camera.lensDirection == CameraLensDirection.back),
       ResolutionPreset.medium,
     );
     _timer = null; // Initialize _timer to null
@@ -82,12 +135,17 @@ class _CameraPageState extends State<CameraPage> {
     print("Printing image bytes");
 
     final response = await http.post(
-      Uri.parse('http://10.11.52.219:5000/process_frame'),
+      Uri.parse('http://192.168.29.182:5000/process_frame'),
       headers: {
         'Content-Type': 'application/octet-stream',
       },
       body: imageBytes,
     );
+
+    // Update the JSON result
+    setState(() {
+      jsonResult = response.body;
+    });
 
     print('Server Response: ${response.body}');
   }
@@ -132,11 +190,36 @@ class _CameraPageState extends State<CameraPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                _toggleTimer();
-              },
-              child: Text(_timer == null ? 'Start / Stop' : 'Stop Timer'),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _startTimer();
+                  },
+                  child: Text('Start Timer'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _stopTimer();
+                  },
+                  child: Text('Stop Timer'),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 20.0,
+            width: double.infinity,
+            color: isPictureTaken ? Colors.green : Colors
+                .grey, // Indicator color
+          ),
+          SizedBox(height: 10), // Add some spacing
+          Container(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              '$jsonResult',
+              style: TextStyle(fontSize: 16),
             ),
           ),
         ],
