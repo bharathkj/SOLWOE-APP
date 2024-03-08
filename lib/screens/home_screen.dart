@@ -15,6 +15,7 @@ import 'package:solwoe/screens/manam_call_screen.dart';
 import 'package:solwoe/screens/welcome_screen.dart';
 
 import 'package:solwoe/screens/camera_page.dart';
+import 'package:solwoe/screens/google_maps_page.dart';
 
 import 'emotion_chart.dart';
 
@@ -135,7 +136,16 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('Results'),
               onTap: () {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => EmotionChart()));
+                    MaterialPageRoute(builder: (_) => EmotionChart())); //EmotionChart
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.local_hospital_rounded),
+              title: const Text('Nearby Clinics'),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => GoogleMapsPage())); //EmotionChart
               },
             ),
 

@@ -23,7 +23,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
   Future<void> _getLocation() async {
     try {
       setState(() {
-        _currentLocation = LatLng(37.7749, -122.4194);
+        _currentLocation = LatLng(13.017844, 80.154037);
       });
       await _getNearbyTherapists();
     } catch (e) {
@@ -98,7 +98,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
   }
 
   String _getPhoneNumber(PlacesSearchResult place) {
-    return '9444850394'; //place.formattedPhoneNumber ?? 'N/A';
+    return '9152987821'; //place.formattedPhoneNumber ?? 'N/A';
   }
 
   String _calculateDistance(PlacesSearchResult place) {

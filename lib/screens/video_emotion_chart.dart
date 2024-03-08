@@ -64,19 +64,19 @@ class VideoEmotionChart extends StatelessWidget {
       case 'happy':
         return 1.0;
       case 'neutral':
-        return 0.0;
-      case 'sad':
-        return -1.0;
-      case 'surprise':
         return 0.5;
+      case 'sad':
+        return 0.0;
+      case 'surprise':
+        return 0.75;
       case 'disgust':
-        return -0.5;
+        return 0.35;
       case 'angry':
-        return -0.8;
+        return 0.2;
       case 'fear':
-        return -0.2;
+        return 0.1;
       default:
-        return 0.0; // Default value for unknown emotions
+        return 0.5; // Default value for unknown emotions
     }
   }
 }
