@@ -28,6 +28,9 @@ import 'package:solwoe/screens/welcome_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:solwoe/screens/doctor_dashboard_screen.dart';
+
+import 'package:solwoe/screens/emotion_chart.dart'; //dummy
 
 class DashboardScreen extends StatefulWidget {
   final UserProfile? userProfile;
@@ -419,6 +422,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    //bool isSpecialUser = true;
+
+    bool isSpecialUser = widget.userProfile!.email == "bharathnick9@gmail.com"; //checking conditional to see if user is doctor or not to determine building button
+
     return SafeArea(
       child: _isLoading
           ? const Center(
@@ -442,6 +450,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
+
                   Positioned(
                     top: 10,
                     left: 0,
@@ -457,6 +466,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                   ),
+
                   Positioned(
                     top: 10,
                     right: 0,
@@ -515,6 +525,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           fontSize: 32,
                           letterSpacing: 2,
                           color: Colors.white),
+                    ),
+                  ),
+                  Positioned(
+                    top: 15,
+                    left: 65,  // Adjust the left position based on your design
+                    child: Visibility(
+                      visible: isSpecialUser,  // Only build and show if the user is special
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => DoctorDashboardScreen()));
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage('assets/docdashboard.png'), // Replace with your dashboard icon
+                          radius: 20,  // Adjust the size based on your design
+                        ),
+                      ),
                     ),
                   ),
                   Positioned(
