@@ -592,7 +592,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
               ),
               ElevatedButton(
                 onPressed: _isSlotSelected && _consultation != -1
-                    ? () {
+                    ? () async {
                         showDialog(
                             barrierDismissible: false,
                             context: context,
@@ -613,7 +613,9 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                                       Slot selectedSlot = slots
                                           .firstWhere((slot) => slot.selected);
 
-                                      Navigator.of(context).push(
+                                      await _updateFirestore();
+
+                                      /*Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (_) => shareResult == 0
                                               ? PaymentScreen(
@@ -647,7 +649,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                                                       _consultation.toString(),
                                                 ),
                                         ),
-                                      );
+                                      );*/
                                     },
                                     child: Text('Pay & Confirm Appointment'),
                                   ),
@@ -676,4 +678,40 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
       ),
     );
   }
+
+  Future<void> _updateFirestore() async {
+    Slot selectedSlot = slots.firstWhere((slot) => slot.selected);
+
+    try {
+      // Assuming 'appointments' is your Firestore collection
+      await FirebaseFirestore.instance.collection('appointments').add({
+        'doctor_name': '${widget.doctor['salutation']} ${widget.doctor['name']}',
+        'doctor_id': widget.doctor['phone'],
+        'patient_name': widget.userProfile!.name,
+        'patient_id': widget.userProfile!.email,
+        'patient_age': '69',
+        'patient_gender': widget.userProfile!.gender,
+        'date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
+        'time': selectedSlot.time,
+        'appointmentId': '539f9snme9',
+        'type': _consultation.toString(),
+        'status': 'booked',
+        // Add other appointment details...
+      });
+
+      // You can also update the availability status in Firestore if needed
+      // ...
+
+      // Update your local UI state if necessary
+      setState(() {
+        // Update your local UI state here...
+      });
+    } catch (e) {
+      // Handle errors
+      print('Error updating Firestore: $e');
+    }
+  }
+
 }
+
+
