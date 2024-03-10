@@ -68,23 +68,6 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                   ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              VideoConsultationScreen(channelName: appointment.appointmentId),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      ConstantColors.primaryBackgroundColor,
-                    ),
-                    child: Text("Join"),
-                  ),
-
                   const SizedBox(
                     width: 4,
                   ),
@@ -124,10 +107,6 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                             );
                           });
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      ConstantColors.primaryBackgroundColor,
-                    ),
                     child: Text('Cancel'),
                   ),
                 ],
@@ -141,10 +120,6 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                       appointment.date,
                       appointment.appointmentId);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                  ConstantColors.primaryBackgroundColor,
-                ),
                 child: Text('Cancel'),
               )
                   : null,
