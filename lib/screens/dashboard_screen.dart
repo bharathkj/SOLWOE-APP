@@ -425,7 +425,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     //bool isSpecialUser = true;
 
-    bool isSpecialUser = widget.userProfile!.email == "bharathnick9@gmail.com"; //checking conditional to see if user is doctor or not to determine building button
+    bool isSpecialUser = widget.userProfile!.role == "Parent"; //checking conditional to see if user is doctor or not to determine building button
 
     return SafeArea(
       child: _isLoading
