@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:solwoe/model/appointment.dart';
 import 'package:solwoe/model/user.dart';
-import 'package:solwoe/screens/emotion_chart.dart';
+import 'package:solwoe/screens/d_emotion_chart.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../database.dart';
@@ -223,7 +223,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                                         onPressed: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
-                                              builder: (_) => EmotionChart(),
+                                              builder: (_) => EmotionChart(selectedPatientId: selectedPatientId),
                                             ),
                                           );
                                         },
