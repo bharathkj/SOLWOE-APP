@@ -31,7 +31,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:solwoe/screens/doctor_dashboard_screen.dart';
 
 import 'package:solwoe/screens/emotion_chart.dart'; //dummy
-
 class DashboardScreen extends StatefulWidget {
   final UserProfile? userProfile;
   const DashboardScreen({super.key, this.userProfile});
@@ -535,7 +534,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => DoctorDashboardScreen()));
+                              builder: (_) => DoctorDashboardScreen(currentUserDisplayName: widget.userProfile!.name)));
                         },
                         child: CircleAvatar(
                           backgroundImage: AssetImage('assets/docdashboard.png'), // Replace with your dashboard icon
