@@ -9,7 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../database.dart';
 
 class DoctorDashboardScreen extends StatefulWidget {
-  const DoctorDashboardScreen({Key? key}) : super(key: key);
+  final String currentUserDisplayName; // Add this field
+  const DoctorDashboardScreen({Key? key, required this.currentUserDisplayName}) : super(key: key);
+
 
   @override
   State<DoctorDashboardScreen> createState() => _DoctorDashboardScreenState();
@@ -40,7 +42,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     // Fetch appointments where doctor_name is equal to the current user's name
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('appointments')
-        .where("doctor_name", isEqualTo: 'Dr. brian')
+        .where("doctor_name", isEqualTo: widget.currentUserDisplayName)
         .get();
 
     print("Number of documents returned: ${querySnapshot.docs.length}");
