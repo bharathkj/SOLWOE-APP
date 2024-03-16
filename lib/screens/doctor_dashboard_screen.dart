@@ -114,8 +114,14 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      // Open phone app with the number "000000000"
-                      launch("tel://7358518218");
+                      // Fetch the mobile number from the appointment
+                      final appointmentData = await FirebaseFirestore.instance
+                          .collection('appointments')
+                          .doc(appointment.documentId)
+                          .get();
+                      final mobileNumber = appointmentData['phone'] as String;
+                      // Open phone app with the fetched mobile number
+                      launch("tel://$mobileNumber");
                     },
                     child: Text('Call'),
                   ),
