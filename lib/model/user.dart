@@ -16,6 +16,7 @@ class UserProfile {
   final String country;
   final String state;
   final String city;
+  final String phone;
 
   UserProfile({
     required this.onboarding,
@@ -27,6 +28,7 @@ class UserProfile {
     required this.country,
     required this.state,
     required this.city,
+    required this.phone,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class UserProfile {
       country: json['country'],
       state: json['state'],
       city: json['city'],
+      phone: json['phone']
     );
   }
 
@@ -54,6 +57,7 @@ class UserProfile {
       'country': country,
       'state': state,
       'city': city,
+      'phone':phone,
     };
   }
 
@@ -86,6 +90,7 @@ class UserProfile {
           country: userDataMap['location']['country'],
           state: userDataMap['location']['state'],
           city: userDataMap['location']['city'],
+          phone: userDataMap['phone'],
         );
 
         prefs.setString('userProfile', json.encode(userProfile.toJson()));

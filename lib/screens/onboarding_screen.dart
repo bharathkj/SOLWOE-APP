@@ -37,6 +37,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   String _cityValue = '';
 
+  String _phone = '';
+
   @override
   void initState() {
     super.initState();
@@ -85,6 +87,48 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> onSubmit(Map<String, dynamic> json) async {
     await Database().setProfile(json);
+    // If the user's role is 'Parent', also save data to the 'doctors' collection
+    if (json['role'] == 'Parent') {
+      final doctorData = {
+        'category': 'government',
+        'consultation': 2,
+        'count': 0,
+        'fee': '2500',
+        'gender': 'male',
+        'location': {
+          'address': 'a',
+          'city': 'b',
+          'pin code': '7',
+          'state': 'd',
+        },
+        'name': 'brian',
+        'onboarding': true,
+        'phone': '+919962900000',
+        'ratings': {
+          'dislike': 0,
+          'like': 0,
+        },
+        'salutation': 'Dr.',
+        'slots': {
+          'lunch': {
+            'end time': '14:00',
+            'start time': '12:00',
+          },
+          'weekday': {
+            'end time': '17:00',
+            'start time': '09:00',
+          },
+          'weekend': {
+            'end time': '14:00',
+            'start time': '09:00',
+          },
+        },
+        'speciality': 'psychiatrist',
+      };
+
+      // Save data to the 'doctors' collection
+      await Database().saveDoctorData(doctorData);
+    }
   }
 
   @override
@@ -185,6 +229,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return 'Enter your full name';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                              ),
+                            ),
+                            // Inside the build method, add a TextFormField for the phone number
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 10.0,
+                                right: 10.0,
+                                top: 10.0,
+                              ),
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _phone = value;
+                                  });
+                                },
+                                maxLength: 15,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.all(0),
+                                  icon: Icon(
+                                    Icons.phone,
+                                    color: Colors.black,
+                                  ),
+                                  labelText: 'Phone',
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Enter your phone number';
                                   } else {
                                     return null;
                                   }
@@ -424,7 +500,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 _role.isNotEmpty &&
                                 _countryValue.isNotEmpty &&
                                 _stateValue != 'null' &&
-                                _cityValue != 'null') {
+                                _cityValue != 'null' &&
+                                _phone.isNotEmpty) {
                               final user = UserProfile(
                                 onboarding: true,
                                 email: _email,
@@ -435,6 +512,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 country: _countryValue,
                                 state: _stateValue,
                                 city: _cityValue,
+                                phone: _phone,
                               );
                               final json = user.toJson();
 
