@@ -350,7 +350,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             },
                                           ),
                                           const Text(
-                                            "Ward's Parent",
+                                            "Doctor / CareTaker",
                                             style: TextStyle(fontSize: 16),
                                           ),
                                         ],
