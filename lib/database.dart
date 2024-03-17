@@ -3,6 +3,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:solwoe/auth.dart';
 
 class Database {
+
+  Future<void> saveDoctorData(Map<String, dynamic> doctorData) async {
+    try {
+      await FirebaseFirestore.instance.collection('doctors').add(doctorData);
+    } catch (e) {
+      print('Error saving doctor data: $e');
+      throw e; // Rethrow the error to handle it at the caller's level if needed
+    }
+  }
+
   Future<bool> checkIfDocumentExists(String documentId) async {
     try {
       var collectionRef = FirebaseFirestore.instance.collection('users');
