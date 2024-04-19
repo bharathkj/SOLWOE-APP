@@ -15,3 +15,7 @@ https://user-images.githubusercontent.com/54678239/235072696-8b0854f4-fade-4c7d-
 5. Add your stripe secret key in payment_screen.dart
 6. Add your agora api key in video_consultation_screen.dart
 7. Create a token server and add the URL in the getToken function in the video_consultation_screen.dart
+
+19/4/24 edit:
+run the text emotion and face emotion detection model in a flask server and put the endpoint url in respective firebase collection. solwoe will fetch it from there
+https://github.com/bharathkj/final-yr-project-models
