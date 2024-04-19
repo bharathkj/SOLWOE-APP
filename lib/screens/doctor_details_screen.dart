@@ -651,7 +651,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                                         ),
                                       );*/
                                     },
-                                    child: Text('Pay & Confirm Appointment'),
+                                    child: Text('Proceed to Book Appointment'),
                                   ),
                                 ],
                               );
@@ -668,7 +668,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
                     'Confirm Date & Time',
-                    style: GoogleFonts.rubik(fontSize: 18),
+                    style: GoogleFonts.rubik(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),

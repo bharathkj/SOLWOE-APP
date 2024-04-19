@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io'; // Add this import for File class
+import 'doctor_info_signup.dart';
 
 
 class ViewProfileScreen extends StatefulWidget {
@@ -21,40 +24,16 @@ class ViewProfileScreen extends StatefulWidget {
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
   late DatabaseReference _databaseReference;
+  String _enteredPhoneNumber = '';
 
   List<String> patients = [];
   String selectedPatient = '';
 
   File? _selectedImage;
 
-  void _onPatientSelected(String patientUsername) {
-  }
-
-  void _grantPermission() {
-    final caretakerUsername = FirebaseAuth.instance.currentUser!.displayName;
-    if (caretakerUsername != null && selectedPatient.isNotEmpty) {
-      _databaseReference
-          .child('users/$selectedPatient/caretakerperm')
-          .push()
-          .set(caretakerUsername);
-
-      // Optionally, you can also update the caretaker's profile with the selected patient
-      _databaseReference
-          .child('users/$caretakerUsername/patients')
-          .push()
-          .set(selectedPatient);
-
-      // Provide feedback to the user if needed
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Permission granted to view $selectedPatient\'s data'),
-        ),
-      );
-    }
-  }
 
 
-
+// intended to get user's picture to use in face emotion detection model without manually importing for new users. currently this code can save it on firebase storage
 
   Future<void> _uploadImageToFirebase(XFile pickedFile) async {
     final storage = FirebaseStorage.instance;
@@ -76,11 +55,35 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
           // Update the UI to reflect the new profile picture.
         } catch (e) {
           print('Error uploading image to Firebase Storage: $e');
-          print(e);
         }
       }
     }
   }
+//to update respective user's data list with their new phone number. i hard typed for testing but couldnt get it to work. current problem is system has datatype issue involving '@' symbol passing onto firebase
+  void _grantPermission() {
+    final currentUserEmail = FirebaseAuth.instance.currentUser!.email;
+
+    if (_enteredPhoneNumber.isNotEmpty) {
+      String encodedEmail = base64Encode(utf8.encode(currentUserEmail!));
+
+      _databaseReference
+          .child('users/bharath')
+          .set({'phone': _enteredPhoneNumber})
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Phone number added to profile'),
+          ),
+        );
+      }).catchError((error) {
+        print('Error uploading phone number: $error');
+      });
+    } else {
+      print('Phone number is empty');
+    }
+  }
+
+
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
@@ -207,22 +210,35 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              DropdownButton<String>(
-                value: selectedPatient,
-                items: patients.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  _onPatientSelected(newValue!);
-                },
-                hint: Text('Select a caretaker'),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    setState(() {
+                      _enteredPhoneNumber = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Enter Phone Number',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.purpleAccent),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.purple),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
               ),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _grantPermission,
-                child: Text('Grant Permission'),
+                child: Text('Update Phone Number'),
               ),
               // ... (remaining existing code)
               buildCard(
@@ -245,6 +261,25 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                 '${widget.userProfile!.state}, ${widget.userProfile!.country}',
                 Icons.location_city_rounded,
               ),
+              ElevatedButton(
+                onPressed: () {
+                  if (widget.userProfile!.role == 'Parent') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DoctorInfoPage()), // Navigate to DoctorInfoPage
+                    );
+                  } else {
+                    // Display a message or perform any other action for users with roles other than 'Parent'
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Only Caretakers Privileged Can Enroll.'),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Update Doctor Credentials'), // Text for the new button
+              ),
+
             ],
           ),
         ),

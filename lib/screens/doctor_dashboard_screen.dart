@@ -18,7 +18,6 @@ class DoctorDashboardScreen extends StatefulWidget {
 }
 
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
-  //String selectedEmail = "coomestofcoomer@gmail.com";
   String selectedPatientId = ""; // Initialize with empty string
   List<String> patientIds = []; // List to store patient IDs
 
@@ -50,18 +49,21 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
     // Extract the list of patient IDs from the query snapshot
     List<String> ids = querySnapshot.docs.map((doc) => doc['patient_id'] as String).toList();
 
+    // Filter out duplicate patient IDs
+    Set<String> uniqueIds = Set<String>.from(ids);
+
     setState(() {
-      // Update the patientIds list
-      patientIds = ids;
+      // Update the patientIds list with unique IDs
+      patientIds = uniqueIds.toList();
       // Update the selectedPatientId with the first patient ID if available
-      if (patientIds.isNotEmpty) {
-        selectedPatientId = patientIds.first;
-      }
+      selectedPatientId = patientIds.isNotEmpty ? patientIds.first : ""; // Update selectedPatientId based on availability
     });
 
     // Debug print to check patient IDs
     print("Patient IDs: $patientIds");
   }
+
+
 
 
   Widget _buildAppointmentsList(String status, String currentuserdisplayname) {
@@ -104,47 +106,45 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
               title: Text(appointment.patientName),
               subtitle: Text(
                   '${appointment.doctorName}, ${appointment.date}, ${appointment.time}'),
-              trailing: appointment.status == 'booked'
-                  ? appointment.type == '1'
-                  ? Row(
+              trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // Fetch the mobile number from the appointment
-                      final appointmentData = await FirebaseFirestore.instance
-                          .collection('appointments')
-                          .doc(appointment.documentId)
-                          .get();
-                      final mobileNumber = appointmentData['phone'] as String;
-                      // Open phone app with the fetched mobile number
-                      launch("tel://$mobileNumber");
-                    },
-                    child: Text('Call'),
-                  ),
+                  if (appointment.status == 'booked')
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Fetch the mobile number from the appointment
+                        final appointmentData = await FirebaseFirestore.instance
+                            .collection('appointments')
+                            .doc(appointment.documentId)
+                            .get();
+                        final mobileNumber = appointmentData['phone'] as String;
+                        // Open phone app with the fetched mobile number
+                        launch("tel://$mobileNumber");
+                      },
+                      child: Text('Call'),
+                    ),
+                  if (appointment.status == 'booked') const SizedBox(width: 8),
+                  if (appointment.status == 'booked')
+                    ElevatedButton(
+                      onPressed: () async {
+                        // Update appointment status to 'completed' in Firestore
+                        await FirebaseFirestore.instance
+                            .collection('appointments')
+                            .doc(appointment.documentId)
+                            .update({'status': 'completed'});
+                        // You may want to add additional logic here to handle UI updates or display a message
+                      },
+                      child: Text('Complete'),
+                    ),
                 ],
-              )
-                  : ElevatedButton(
-                onPressed: () async {
-                  await Database().cancelAppointmentCollection(
-                      appointment.documentId);
-                  await Database().cancelAppointmentRealtime(
-                      appointment.doctorId,
-                      appointment.date,
-                      appointment.appointmentId);
-                },
-                child: Text('Cancel'),
-              )
-                  : null,
+              ),
             );
           },
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

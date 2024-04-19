@@ -27,10 +27,12 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
   late String _pageTitle;
   late String _pageContent;
   late int _colorId;
+  String serverIpAddress = ''; // Initial IP address
 
   @override
   void initState() {
     super.initState();
+    fetchServerIpAddress(); // Fetch IP address when the widget initializes
 
     if (widget.doc != null) {
       // Update page
@@ -45,6 +47,18 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
       _pageTitle = "";
       _pageContent = "";
       _colorId = Random().nextInt(ConstantColors.diaryCardsColor.length);
+    }
+  }
+
+  // Method to fetch IP address from Firestore
+  Future<void> fetchServerIpAddress() async {
+    final docSnapshot = await FirebaseFirestore.instance.collection('config').doc('server').get();
+    if (docSnapshot.exists) {
+      setState(() {
+        serverIpAddress = docSnapshot.data()?['bert'] ?? ''; // Get IP address from 'bert' field
+      });
+    } else {
+      print('Server document does not exist!');
     }
   }
 
@@ -98,7 +112,7 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
   }
 
   Future<void> sendToFlaskServer(String title, String content, String documentId) async {
-    final String flaskServerUrl = 'http://10.11.52.219:5000/analyze-emotion'; // Replace with your Flask server URL
+    final String flaskServerUrl = '$serverIpAddress/analyze-emotion'; // Replace with your Flask server URL
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {

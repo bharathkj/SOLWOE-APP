@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_google_maps_webservices/places.dart';
 import "package:flutter_google_maps_webservices/geocoding.dart" as geocoding;
 
-const kGoogleApiKey = "";
+const kGoogleApiKey = "ENTER UR GOOGLE PLACES API HERE";
 
 class GoogleMapsPage extends StatefulWidget {
   @override
@@ -19,7 +19,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
     super.initState();
     _getLocation();
   }
-
+//hardcoded srm ramapuram's geo location. use location system call if to change to dynamic
   Future<void> _getLocation() async {
     try {
       setState(() {
@@ -68,10 +68,10 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                 ),
                 SizedBox(height: 5),
                 Text("Address: ${place.vicinity ?? 'N/A'}"),
+                /*SizedBox(height: 5),
+                Text("Phone: ${_getPhoneNumber(place)}"),*/
                 SizedBox(height: 5),
-                Text("Phone: ${_getPhoneNumber(place)}"),
-                SizedBox(height: 5),
-                Text("Distance: ${_calculateDistance(place)} meters away"),
+                Text("Distance: ${_calculateDistance(place)} KM away"),
               ],
             ),
           ),

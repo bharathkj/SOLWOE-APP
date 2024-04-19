@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase app
   final cameras = await availableCameras();
   runApp(MyApp(cameras: cameras));
 }
@@ -35,37 +40,47 @@ class _CameraPageState extends State<CameraPage> {
   late CameraController _controller;
   late List<CameraDescription> cameras;
   late bool isCameraReady;
-  late Timer? _timer; // Use Timer? to allow null
-  bool isTimerActive = false; // Indicator for the active timer
-  bool isPictureTaken = false; // Indicator for the picture being taken
-  String jsonResult = ''; // Variable to hold the JSON result
+  late Timer? _timer;
+  bool isTimerActive = false;
+  bool isPictureTaken = false;
+  String jsonResult = '';
+  String serverIpAddress = ''; // Initial IP address
 
-  // Start the timer
+  // Firebase Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Method to fetch IP address from Firestore
+  Future<void> fetchServerIpAddress() async {
+    final docSnapshot = await FirebaseFirestore.instance.collection('config').doc('server').get();
+    if (docSnapshot.exists) {
+      setState(() {
+        serverIpAddress = docSnapshot.data()?['emote'] ?? ''; // Get IP address from 'emote' field
+      });
+    } else {
+      print('Server document does not exist!');
+    }
+  }
+
   void _startTimer() {
     if (_timer == null) {
-      // Start the timer
       _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) async {
         if (isCameraReady) {
-          // Set the indicator to show the picture is being taken
           setState(() {
             isPictureTaken = true;
           });
 
           await _sendImageFrame();
 
-          // Reset the indicator after a short delay
           _resetPictureTakenIndicator();
         }
       });
 
-      // Update the visual indicator
       setState(() {
         isTimerActive = true;
       });
     }
   }
 
-  // Reset the indicator after a short delay
   void _resetPictureTakenIndicator() {
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
@@ -74,14 +89,11 @@ class _CameraPageState extends State<CameraPage> {
     });
   }
 
-  // Stop the timer
   void _stopTimer() {
     if (_timer != null) {
-      // Stop the timer
       _timer!.cancel();
       _timer = null;
 
-      // Update the visual indicator
       setState(() {
         isTimerActive = false;
         isPictureTaken = false;
@@ -92,14 +104,15 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
+    fetchServerIpAddress(); // Fetch IP address when the widget initializes
     cameras = widget.cameras;
     isCameraReady = false;
     _controller = CameraController(
-      cameras.firstWhere((camera) =>
-      camera.lensDirection == CameraLensDirection.back),
+      cameras.firstWhere(
+              (camera) => camera.lensDirection == CameraLensDirection.back),
       ResolutionPreset.medium,
     );
-    _timer = null; // Initialize _timer to null
+    _timer = null;
     _initializeController();
   }
 
@@ -135,14 +148,26 @@ class _CameraPageState extends State<CameraPage> {
     print("Printing image bytes");
 
     final response = await http.post(
-      Uri.parse('http://192.168.29.182:5000/process_frame'),
+      Uri.parse('$serverIpAddress/process_frame'),
       headers: {
         'Content-Type': 'application/octet-stream',
       },
       body: imageBytes,
     );
 
-    // Update the JSON result
+    // Decode JSON response
+    final Map<String, dynamic> decodedResponse = json.decode(response.body);
+
+    // Save emotion result to Firestore
+    final user = FirebaseAuth.instance.currentUser;
+    final userEmail = user?.email;
+    if (userEmail != null) {
+      await _firestore.collection('users').doc(userEmail).collection('emotions').add({
+        'timestamp': Timestamp.now(),
+        'emotion': decodedResponse['dominant_emotion'],
+      });
+    }
+
     setState(() {
       jsonResult = response.body;
     });
@@ -150,17 +175,14 @@ class _CameraPageState extends State<CameraPage> {
     print('Server Response: ${response.body}');
   }
 
-  // Toggle the timer
   void _toggleTimer() {
     if (_timer == null) {
-      // Start the timer
-      _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+      _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) async {
         if (isCameraReady) {
           await _sendImageFrame();
         }
       });
     } else {
-      // Stop the timer
       _timer!.cancel();
       _timer = null;
     }
@@ -169,7 +191,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void dispose() {
     _disposeController();
-    _timer?.cancel(); // Cancel the timer if it's running
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -211,10 +233,9 @@ class _CameraPageState extends State<CameraPage> {
           Container(
             height: 20.0,
             width: double.infinity,
-            color: isPictureTaken ? Colors.green : Colors
-                .grey, // Indicator color
+            color: isPictureTaken ? Colors.green : Colors.grey,
           ),
-          SizedBox(height: 10), // Add some spacing
+          SizedBox(height: 10),
           Container(
             padding: EdgeInsets.all(8),
             child: Text(
@@ -227,4 +248,3 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
-

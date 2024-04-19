@@ -39,16 +39,10 @@ class VideoEmotionChart extends StatelessWidget {
     }
     String? userEmail = currentUser.email;
 
-    var username;
-    if (userEmail == "coomestofcoomer@gmail.com") {
-      username = 'bharath';
-    } else {
-      username = userEmail;
-    }
 
     var querySnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(username)
+        .doc(userEmail)
         .collection('emotions')
         .get();
 
