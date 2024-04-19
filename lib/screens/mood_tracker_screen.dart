@@ -111,9 +111,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Mood Tracker',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),

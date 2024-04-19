@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:solwoe/auth.dart';
 import 'package:solwoe/colors.dart';
 import 'package:solwoe/screens/page_reader_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PageEditorScreen extends StatefulWidget {
   final DocumentSnapshot? doc;
@@ -24,10 +27,12 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
   late String _pageTitle;
   late String _pageContent;
   late int _colorId;
+  String serverIpAddress = ''; // Initial IP address
 
   @override
   void initState() {
     super.initState();
+    fetchServerIpAddress(); // Fetch IP address when the widget initializes
 
     if (widget.doc != null) {
       // Update page
@@ -45,6 +50,19 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
     }
   }
 
+  // Method to fetch IP address from Firestore
+  Future<void> fetchServerIpAddress() async {
+    final docSnapshot = await FirebaseFirestore.instance.collection('config').doc('server').get();
+    if (docSnapshot.exists) {
+      setState(() {
+        serverIpAddress = docSnapshot.data()?['bert'] ?? ''; // Get IP address from 'bert' field
+      });
+    } else {
+      print('Server document does not exist!');
+    }
+  }
+
+
   Future<void> _addPage({DocumentSnapshot? doc}) async {
     final DateTime now = DateTime.now();
     final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
@@ -52,6 +70,7 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
 
     try {
       if (doc != null) {
+        // Update existing page
         await FirebaseFirestore.instance
             .collection('users')
             .doc(Auth().currentUser!.email)
@@ -64,7 +83,8 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
           'last_edit_date': formattedDate,
         });
       } else {
-        await FirebaseFirestore.instance
+        // Add new page
+        final addedDocRef = await FirebaseFirestore.instance
             .collection('users')
             .doc(Auth().currentUser!.email)
             .collection('diary')
@@ -75,6 +95,9 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
           'creation_date': formattedDate,
           'last_edit_date': formattedDate,
         });
+
+        // Send text input to Flask server
+        await sendToFlaskServer(_pageTitle, _pageContent, addedDocRef.id);
       }
     } catch (error) {
       print(error);
@@ -87,6 +110,38 @@ class _PageEditorScreenState extends State<PageEditorScreen> {
 
     Navigator.pop(context);
   }
+
+  Future<void> sendToFlaskServer(String title, String content, String documentId) async {
+    final String flaskServerUrl = '$serverIpAddress/analyze-emotion'; // Replace with your Flask server URL
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final Map<String, String> payload = {
+        'text_data': content,
+        'user_name': user.email ?? "Unknown",
+      };
+
+      try {
+        final response = await http.post(
+          Uri.parse(flaskServerUrl),
+          headers: {'Content-Type': 'application/json'},  // Set Content-Type header
+          body: jsonEncode(payload),  // Encode payload as JSON
+        );
+
+        if (response.statusCode == 200) {
+          print('Text input sent to Flask server successfully');
+        } else {
+          print('Failed to send text input to Flask server. Status code: ${response.statusCode}');
+        }
+      } catch (error) {
+        print('Error sending text input to Flask server: $error');
+      }
+    } else {
+      print('User not authenticated. Unable to send text input to Flask server.');
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

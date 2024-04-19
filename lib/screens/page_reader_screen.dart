@@ -17,9 +17,6 @@ class PageReaderScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text(
           'Diary',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),

@@ -65,87 +65,63 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                   '${appointment.patientName}, ${appointment.date}, ${appointment.time}'),
               trailing: appointment.status == 'booked'
                   ? appointment.type == '1'
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        VideoConsultationScreen(channelName: appointment.appointmentId),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    ConstantColors.primaryBackgroundColor,
-                              ),
-                              child: Text("Join"),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext builderContext) {
-                                      return AlertDialog(
-                                        title: const Text('Cancel Appointment'),
-                                        content:
-                                            const Text('Confirm Cancellation.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text('Go Back'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              await Database()
-                                                  .cancelAppointmentCollection(
-                                                      appointment.documentId);
-                                              await Database()
-                                                  .cancelAppointmentRealtime(
-                                                      appointment.doctorId,
-                                                      appointment.date,
-                                                      appointment
-                                                          .appointmentId);
-                                            },
-                                            child: Text('Cancel Appointment'),
-                                          ),
-                                        ],
-                                      );
-                                    });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    ConstantColors.primaryBackgroundColor,
-                              ),
-                              child: Text('Cancel'),
-                            ),
-                          ],
-                        )
-                      : ElevatedButton(
-                          onPressed: () async {
-                            await Database().cancelAppointmentCollection(
-                                appointment.documentId);
-                            await Database().cancelAppointmentRealtime(
-                                appointment.doctorId,
-                                appointment.date,
-                                appointment.appointmentId);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                ConstantColors.primaryBackgroundColor,
-                          ),
-                          child: Text('Cancel'),
-                        )
+                  ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext builderContext) {
+                            return AlertDialog(
+                              title: const Text('Cancel Appointment'),
+                              content:
+                              const Text('Confirm Cancellation.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Go Back'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    await Database()
+                                        .cancelAppointmentCollection(
+                                        appointment.documentId);
+                                    await Database()
+                                        .cancelAppointmentRealtime(
+                                        appointment.doctorId,
+                                        appointment.date,
+                                        appointment
+                                            .appointmentId);
+                                  },
+                                  child: Text('Cancel Appointment'),
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    child: Text('Cancel'),
+                  ),
+                ],
+              )
+                  : ElevatedButton(
+                onPressed: () async {
+                  await Database().cancelAppointmentCollection(
+                      appointment.documentId);
+                  await Database().cancelAppointmentRealtime(
+                      appointment.doctorId,
+                      appointment.date,
+                      appointment.appointmentId);
+                },
+                child: Text('Cancel'),
+              )
                   : null,
             );
           },
@@ -167,9 +143,6 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
           backgroundColor: ConstantColors.secondaryBackgroundColor,
           title: Text(
             'Guided Care',
-            style: GoogleFonts.sourceSerifPro(
-              color: Colors.black,
-            ),
           ),
           iconTheme: IconThemeData(color: Colors.black),
         ),
@@ -223,7 +196,7 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Book an Appointment",
@@ -248,7 +221,7 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (_) =>
-                                                  const AppointmentScreen(),
+                                              const AppointmentScreen(),
                                             ),
                                           );
                                         },
@@ -259,7 +232,7 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
                                               .primaryBackgroundColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(50),
+                                            BorderRadius.circular(50),
                                           ),
                                         ),
                                         child: Text(
@@ -317,3 +290,4 @@ class _GuidedCareScreenState extends State<GuidedCareScreen> {
     );
   }
 }
+

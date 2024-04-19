@@ -131,9 +131,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Diary',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),

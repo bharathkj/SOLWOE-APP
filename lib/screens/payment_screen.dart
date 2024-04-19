@@ -63,9 +63,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Billing Details',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
@@ -133,22 +130,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       widget.type == '0'
                           ? Icon(
-                              Icons.person_outline,
-                              color: Colors.grey,
-                            )
+                        Icons.person_outline,
+                        color: Colors.grey,
+                      )
                           : Icon(
-                              Icons.videocam_outlined,
-                              color: Colors.grey,
-                            ),
+                        Icons.videocam_outlined,
+                        color: Colors.grey,
+                      ),
                       widget.type == '0'
                           ? Text(
-                              'In-Person Consultation Time',
-                              style: GoogleFonts.quicksand(fontSize: 14),
-                            )
+                        'In-Person Consultation Time',
+                        style: GoogleFonts.quicksand(fontSize: 14),
+                      )
                           : Text(
-                              'Video Consultation Time',
-                              style: GoogleFonts.quicksand(fontSize: 14),
-                            ),
+                        'Video Consultation Time',
+                        style: GoogleFonts.quicksand(fontSize: 14),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 2),
@@ -237,12 +234,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
             onTap: _isMakingPayment
                 ? null
                 : () async {
-                    await makePayment();
-                    setState(() {
-                      onTap:
-                      null;
-                    });
-                  },
+              await makePayment();
+              setState(() {
+                onTap:
+                null;
+              });
+            },
             child: Center(
               child: Container(
                 height: 50,
@@ -274,7 +271,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         _isMakingPayment = true;
       });
       paymentIntentData =
-          await createPaymentIntent(totalAmount.toString(), 'INR');
+      await createPaymentIntent(totalAmount.toString(), 'INR');
       if (paymentIntentData != null) {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -305,11 +302,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
         await NotificationService.showNotification(
             title: 'Solwoe',
             body:
-                'Payment Successful.\nAmount Paid: \u{20B9} ${totalAmount.toStringAsFixed(2)}');
+            'Payment Successful.\nAmount Paid: \u{20B9} ${totalAmount.toStringAsFixed(2)}');
         await NotificationService.showNotification(
-                title: 'Solwoe',
-                body:
-                    'Appointment Booked Successfully.\nAppointment Date: ${widget.date} | Time:${widget.slot}')
+            title: 'Solwoe',
+            body:
+            'Appointment Booked Successfully.\nAppointment Date: ${widget.date} | Time:${widget.slot}')
             .then((value) async {
           String appointmenId = await Database().addAppointmentRealtime(
               widget.doctorId, widget.patientId, widget.date, widget.slot);
@@ -327,7 +324,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             }
             await Database().bookAppointmentCollection(
               doctorName:
-                  '${widget.doctor['salutation']} ${widget.doctor['name']}',
+              '${widget.doctor['salutation']} ${widget.doctor['name']}',
               doctorId: widget.doctorId,
               patientName: widget.userProfile!.name,
               patientId: widget.patientId,
@@ -359,7 +356,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             }
             await Database().bookAppointmentCollection(
               doctorName:
-                  '${widget.doctor['salutation']} ${widget.doctor['name']}',
+              '${widget.doctor['salutation']} ${widget.doctor['name']}',
               doctorId: widget.doctorId,
               patientName: widget.userProfile!.name,
               patientId: widget.patientId,
@@ -399,7 +396,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           body: body,
           headers: {
             'Authorization':
-                'Bearer YOUR_SK_API_KEY',
+            'Bearer YOUR_SK_API_KEY',
             'Content-Type': 'application/x-www-form-urlencoded',
           });
       return jsonDecode(response.body);

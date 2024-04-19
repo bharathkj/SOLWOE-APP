@@ -49,9 +49,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         backgroundColor: ConstantColors.secondaryBackgroundColor,
         title: Text(
           'Book Appointment',
-          style: GoogleFonts.sourceSerifPro(
-            color: Colors.black,
-          ),
         ),
         iconTheme: IconThemeData(color: Colors.black),
       ),
